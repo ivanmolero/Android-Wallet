@@ -10,12 +10,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cristianvillamil.platziwallet.R
 import com.cristianvillamil.platziwallet.ui.home.FavoriteTransfer
+import com.cristianvillamil.platziwallet.ui.home.HomeContract
+import com.cristianvillamil.platziwallet.ui.home.presenter.HomePresenter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_home.*
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), HomeContract.View {
 
     private val favoriteTransferAdapter = FavoriteTransferAdapter()
+    // lateinit permite declarar posteriormente la instancia
+    private lateinit var homePresenter: HomeContract.Presenter
+    // val ... by lazy, permite declarar la variable y esta se ejecuta en la primera
+    // llamada, para ese momento ya existe el contexto necesario
+//    private val homePresenter: HomeContract.Presenter by lazy {
+//        HomePresenter(this)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +37,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        // ahora que ya tenemos la vista creada (onViewCreated) podemos asignar el valor
+        // esto no es necesario si usamos val... by lazy
+        homePresenter = HomePresenter(this)
+        homePresenter.retrieveFavoriteTransfers()
         circularProgress.setProgressWithAnimation(
             70f,
             1000,
@@ -44,54 +57,21 @@ class HomeFragment : Fragment() {
         favoriteTransfersRecyclerView.layoutManager =
             LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         favoriteTransfersRecyclerView.adapter = favoriteTransferAdapter
-        val items = ArrayList<FavoriteTransfer>()
-        items.add(
-            FavoriteTransfer(
-                1,
-                "Freddy Vega",
-                456.000,
-                "Hace 2h",
-                "https://media.licdn.com/dms/image/C4E03AQGlqpsnWjB6Yg/profile-displayphoto-shrink_200_200/0?e=1582761600&v=beta&t=dYj3_HcoKdR66KpEup0FPBTziu8xiF2I2snqJbf4DGM"
-            )
-        )
-        items.add(
-            FavoriteTransfer(
-                1,
-                "Nestor Villamil",
-                210.900,
-                "Ayer",
-                "https://krausefx.com/assets/posts/profilePictures/FelixKrause2016.jpg"
-            )
-        )
-        items.add(
-            FavoriteTransfer(
-                1,
-                "Fernando Ávila",
-                456.000,
-                "Hace 2h",
-                "https://www.oliverwyman.com/content/dam/oliver-wyman/v2/careers/profiles/scottbk-profile-460x460.jpg"
-            )
-        )
-        items.add(
-            FavoriteTransfer(
-                1,
-                "Cristian Villamil",
-                456.000,
-                "Hace 2h",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTw8mKnjVErhmhl5S_aUZfvf86vwZOMJBqbUqM-guT-kv6K4xu&s"
-            )
-        )
-        items.add(
-            FavoriteTransfer(
-                1,
-                "Cristian Villamil",
-                456.000,
-                "Hace 2h",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVSEHZQ2HJu9FEzFLU4yEAUv46sfRQjxUYkiVv7IEFxNndQ_7C&s"
-            )
-        )
+
 
         favoriteTransferAdapter.setData(items)
 
+    }
+
+    override fun showLoader() {
+        TODO("Not yet implemented")
+    }
+
+    override fun hideLoader() {
+        TODO("Not yet implemented")
+    }
+
+    override fun showFavoriteTransfer(favoriteTransfer: List<FavoriteTransfer>) {
+        favoriteTransferAdapter.setData(favoriteTransfer)
     }
 }
